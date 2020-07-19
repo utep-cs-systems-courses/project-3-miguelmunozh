@@ -81,18 +81,47 @@ void wdt_c_handler()
   P1OUT |= GREEN_LED;		      /**< Green LED on when cpu on */
   count ++;
   if (count == 15) {
-    if(col <= 50){ //added to update the shape
-      //clearScreen(COLOR_BLUE); // here is the same problem of the long blink
-      col++;
-    }//else if col == 50 start going back
+  
+    if(firstLine == 1){
+      row--;
+      if(row == 30){
+	firstLine =0;
+	secondLine = 1;
+	}      
+     }
+    if(secondLine == 1){
+	col++;
+	row++;
+	if(col==50){	
+	  secondLine =0;
+	  thirdLine =3;
+      }
+    }
+    if(thirdLine == 3){
+	col++;
+	row--;
+	if(col==90){	
+	  thirdLine =0;
+	  fourthLine = 4;
+      }
+    }
+    if(fourthLine == 4){	
+	row++;
+	if(row==90){	
+	  fourthLine = 0;
+	  //clearScreen(COLOR_BLUE);
+	
+	  col = 10;
+	  row = 90;
+	  firstLine = 1; // to keep drawing it over and over again
+       }
+    }
+  
     //mlAdvance(&ml0, &fieldFence);
     if(str[0]=='0'){
      //clear screen and redraw the figure with a diferent position, same problem than above
       //clearScreen(COLOR_BLUE);
       redrawScreen = 1; //not update the screen,
-      /*
-     col -=1;
-     fillRectangle(col,10, 50, 50, COLOR_ORANGE);*/
     }
     if(str[1]=='1'){
      
