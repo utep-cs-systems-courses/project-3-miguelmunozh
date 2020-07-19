@@ -63,7 +63,7 @@ void main()
     redrawScreen = 0;
 
     //clearScreen(COLOR_BLUE); not here because this loops runs forever
-    fillRectangle(col,10, 50, 50, COLOR_ORANGE);
+    fillRectangle(col,row, 20, 20, COLOR_ORANGE);
    
     // movLayerDraw(&ml0, &layer0);
   }
@@ -126,8 +126,8 @@ void wdt_c_handler()
     if(str[1]=='1'){
      
      clearScreen(COLOR_BLUE);
-     fillRectangle(20,20, 50, 50, bgColor); // another figure
-     
+     // fillRectangle(20,20, 50, 50, bgColor); // another figure
+     customShape();
     }
     if(str[2]=='2'){
       //bgColor = COLOR_WHITE;
