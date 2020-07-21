@@ -3,6 +3,7 @@
  */
 #include "lcdutils.h"
 #include "lcddraw.h"
+#include "stateMachine.h"
 
 /* funtions to draw custom shapes */
 void enemy(char col, char row, u_int colorBGR){
@@ -18,16 +19,17 @@ void enemy(char col, char row, u_int colorBGR){
     }
   }
 }
+/** draw the space ship to the screen*/
 void spaceShip(char col, char row, u_int colorBGR){
   
   for(int i=0; i<=17; i++){
     for(int j=0; j<=i; j++){
-      drawPixel(16-j+47, 159-i,COLOR_PINK);
-      drawPixel(17+j+48, 159-i,COLOR_PINK);
+      drawPixel(16-j+47, 159-i,colorBGR);
+      drawPixel(17+j+48, 159-i,colorBGR);
     }
   }
 
-  //rectagle at the top
+  //rectagle at the top of the spaceship
   for(int i=0; i <= 20; i+=2){
     for(int j=0; j <= 5; j+=2){
       drawPixel(i+col+10, row-j, colorBGR);
@@ -37,31 +39,23 @@ void spaceShip(char col, char row, u_int colorBGR){
   //left triangle
   for(int i = 0; i <= 10; i++){
     for(int j =0; j <= i; j++){
-      drawPixel(col+i, row-j+1, COLOR_PINK);
+      drawPixel(col+i, row-j+1, colorBGR);
     }
   }
-  //since i want to push the r triangle to the right i add 30 more columns..and so on
+  //since i want to push the r triangle to the right i add 30 more columns
  for(int i = 0; i <= 10; i++){
     for(int j = i; j <= 10; j++){
-      drawPixel(col+i+27, row+j-9, COLOR_PINK); 
+      drawPixel(col+i+27, row+j-9, colorBGR); 
     }
   }
-  //right triangle
-  /*  for(int i =0; i < 10; i++){
-    for(int j=9-i; j >= 0; j--){
-      drawPixel(i+col+30, row-j, colorBGR);
-    }
-    }*/
 }
 
+/*draw a rectangle to simulate bullets of a fixed size*/
 void bullet(u_char col, u_char row, u_int colorBGR){
- for(int i=0; i < 3; i++){
-    for(int j=0; j < 15; j++){
-      drawPixel(col+i, row-j, colorBGR);
-    }
-  } 
+fillRectangle(col,row, 3, 12, colorBGR);
 }
 
+/** next two functions are used to draw a string to the screen*/
 void drawChar8x12(u_char rcol, u_char rrow,char c, u_int fgColorBGR, u_int bgColorBGR)
 {
   u_char oc=c-0x20;
@@ -84,19 +78,27 @@ void drawString8x12(u_char col,u_char row, char *string,u_int fgColorBGR, u_int 
 }
 
 /*Helper function to call functions and form an image*/
-void customShape(){
-    // saviour spaceship
-  spaceShip(45,140,COLOR_RED);
+void customShape(u_int bgColor,u_int enemyColorBGR, u_int bulletRBG, u_int spaceship){
+  clearScreen(bgColor);
+  // saviour spaceship
+  spaceShip(45,140,spaceship);
   // enemy space ships
-  enemy(20,30, COLOR_WHITE);
-  enemy(50,50, COLOR_WHITE);
-  enemy(90,20, COLOR_WHITE);
-  bullet(70,80,COLOR_RED);
-  bullet(90,50,COLOR_RED);
-  bullet(50,120,COLOR_RED);
+  enemy(20,30, enemyColorBGR);
+  enemy(50,50, enemyColorBGR);
+  enemy(90,20, enemyColorBGR);
+  bullet(70,80,bulletRBG);
+  bullet(90,50,bulletRBG);
+  bullet(50,105,bulletRBG);
 }
 
-
+/**draws a string of the size 8x12*/
+void drawCustomString(){
+      demoSong();
+      clearScreen(COLOR_WHITE);
+      drawString8x12(5,20,"Miguel Mun.",COLOR_BLACK,COLOR_WHITE);
+      drawString8x12(20,50,"Project-3",COLOR_BLACK,COLOR_WHITE);
+      drawString8x12(30,80,"LCD TOY",COLOR_BLACK,COLOR_WHITE);
+}
 
 /** Draw single pixel at x,row 
  *

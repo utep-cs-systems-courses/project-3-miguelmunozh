@@ -1,11 +1,3 @@
-/** \file shapemotion.c
- *  \brief This is a simple shape motion demo.
- *  This demo creates two layers containing shapes.
- *  One layer contains a rectangle and the other a circle.
- *  While the CPU is running the green LED is on, and
- *  when the screen does not need to be redrawn the CPU
- *  is turned off along with the green LED.
- */  
 #include <msp430.h>
 #include <libTimer.h>
 #include <lcdutils.h>
@@ -13,21 +5,15 @@
 #include <p2switches.h>
 #include <shape.h>
 #include <abCircle.h>
-
+#include "buzzer.h"
+//#include "stateMachine.h"
 #define GREEN_LED BIT6
 
-
-u_int bgColor = COLOR_BLUE;     /**< The background color */
 int redrawScreen = 1;           /**< Boolean for whether screen needs to be redrawn */
 
-Region fieldFence;		/**< fence around playing field  */
-char color = COLOR_BLACK;
-int firstLine = 1;
-int secondLine = 0;
-int thirdLine = 0;
-int fourthLine = 0;
 int col = 10;
 int row = 90;
+int state =0;
 /** Initializes everything, enables interrupts and green LED, 
  *  and handles the rendering for the screen
  */
@@ -40,16 +26,10 @@ void main()
   lcd_init();
   shapeInit();
   p2sw_init(15);
-
+  buzzer_init();
   shapeInit();
-  clearScreen(COLOR_BLUE);
-  //layerInit(&layer0);
-  //layerDraw(&layer0);
-
-
-  //layerGetBounds(&fieldLayer, &fieldFence);
-
-
+  clearScreen(COLOR_WHITE);
+ 
   enableWDTInterrupts();      /**< enable periodic interrupt */
   or_sr(0x8);	              /**< GIE (enable interrupts) */
 
@@ -62,10 +42,8 @@ void main()
     P1OUT |= GREEN_LED;       /**< Green led on when CPU on */
     redrawScreen = 0;
 
-    //clearScreen(COLOR_BLUE); not here because this loops runs forever
     fillRectangle(col,row, 20, 20, COLOR_ORANGE);
    
-    // movLayerDraw(&ml0, &layer0);
   }
 }
 
@@ -81,60 +59,55 @@ void wdt_c_handler()
   P1OUT |= GREEN_LED;		      /**< Green LED on when cpu on */
   count ++;
   if (count == 15) {
-  
-    if(firstLine == 1){
-      row--;
+
+    /**state machine to move the SQUARE and paint my first initial */
+switch(state){
+  case 0:
+     row--;
       if(row == 30){
-	firstLine =0;
-	secondLine = 1;
-	}      
-     }
-    if(secondLine == 1){
-	col++;
+	state = 1;
+      }      
+    break;
+  case 1:
+    	col++;
 	row++;
-	if(col==50){	
-	  secondLine =0;
-	  thirdLine =3;
+	if(col==50){
+	  state = 2;
       }
-    }
-    if(thirdLine == 3){
-	col++;
+    break;
+  case 2:
+    	col++;
 	row--;
 	if(col==90){	
-	  thirdLine =0;
-	  fourthLine = 4;
+	  state = 3;
       }
-    }
-    if(fourthLine == 4){	
-	row++;
+    break;
+  case 3:
+    row++;
 	if(row==90){	
-	  fourthLine = 0;
-	  //clearScreen(COLOR_BLUE);
-	
 	  col = 10;
 	  row = 90;
-	  firstLine = 1; // to keep drawing it over and over again
-       }
-    }
-  
-    //mlAdvance(&ml0, &fieldFence);
+	  state = 0;
+	}
+    break;
+ }
+
+/**control what the butons do when they are pressed*/
     if(str[0]=='0'){
-     //clear screen and redraw the figure with a diferent position, same problem than above
-      //clearScreen(COLOR_BLUE);
+      buzzer_set_period(0);
       redrawScreen = 1; //not update the screen,
     }
     if(str[1]=='1'){
-     
-     clearScreen(COLOR_BLUE);
-     // fillRectangle(20,20, 50, 50, bgColor); // another figure
-     customShape();
+     buzzer_set_period(0);
+     customShape(COLOR_BLACK,COLOR_WHITE, COLOR_RED,COLOR_PINK);
     }
     if(str[2]=='2'){
-      //bgColor = COLOR_WHITE;
-     clearScreen(COLOR_RED);
-     fillRectangle(20,20, 50, 50, COLOR_WHITE);
+      buzzer_set_period(0);
+      customShape(COLOR_WHITE,COLOR_BLACK,COLOR_PINK,COLOR_TURQUOISE);
     }
-    //clear screen and write something to the screen
+    if(str[3]=='3'){
+      drawCustomString();
+    }
     count = 0;
   } 
   P1OUT &= ~GREEN_LED;		    /**< Green LED off when cpu off */

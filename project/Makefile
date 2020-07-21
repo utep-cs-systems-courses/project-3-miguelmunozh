@@ -10,7 +10,7 @@ AS              = msp430-elf-gcc -mmcu=${CPU} -c
 all:shapemotion.elf
 
 #additional rules for files
-shapemotion.elf: ${COMMON_OBJECTS} font-11x16.o font-5x7.o font-8x12.o lcdutils.o lcddraw.o main.o wdt_handler.o
+shapemotion.elf: ${COMMON_OBJECTS} buzzer.o stateMachine.o font-11x16.o font-5x7.o font-8x12.o lcdutils.o lcddraw.o main.o wdt_handler.o
 	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^ -lTimer -lLcd -lShape -lCircle -lp2sw
 
 load: shapemotion.elf
@@ -18,6 +18,6 @@ load: shapemotion.elf
 
 lcddraw.o: lcddraw.c lcddraw.h lcdutils.h
 lcdutils.o: lcdutils.c lcdutils.h
-
+stateMachine.o: stateMachine.c stateMachine.h
 clean:
 	rm -f *.o *.*~ *.elf
