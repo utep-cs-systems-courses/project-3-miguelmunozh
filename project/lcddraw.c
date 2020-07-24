@@ -1,27 +1,42 @@
-/** \file lcddraw.c
- *  \brief Adapted from RobG's EduKit
- */
 #include "lcdutils.h"
 #include "lcddraw.h"
 #include "stateMachine.h"
+#include "toggle.h"
 
-/* funtions to draw custom shapes */
-void enemy(char col, char row, u_int colorBGR){
-  for(int r = 0; r <= 20; r++){
-    // c+=2 to make the figure dotted,3 for pattern
-    for(int c = r; c <= 10; c+=2){
-      //right triangle of spaceship
-      drawPixel(col+c, row+r, colorBGR);
-      drawPixel(col+c, row-r, colorBGR);
-      //left triangle of spaceship
-      drawPixel(col-c, row-r, colorBGR);
-      drawPixel(col-c, row+r, colorBGR);
+/** next two functions are used to draw a string to the screen*/
+void drawChar8x12(u_char rcol, u_char rrow,char c, u_int fgColorBGR, u_int bgColorBGR)
+{
+  u_char col = 0;
+  u_int row = 0;    
+  u_char bit = 0x080;
+  u_char oc = c - 0x020;
+
+  lcd_setArea(rcol, rrow, rcol + 7, rrow + 12);
+  while(row < 12){
+    while(col < 8){
+      u_int colorBGR = (font_8x12[oc][row] & bit) ? fgColorBGR : bgColorBGR;
+      lcd_writeColor(colorBGR);
+      col++;
+      bit >>= 1;
     }
+    col = 0;
+    bit = 0x80;
+    row++;
+  }
+ }
+
+void drawString8x12(u_char col,u_char row, char *string,u_int fgColorBGR, u_int byColorBGR)
+{
+  u_char cols=col;
+  while(*string){
+    drawChar8x12(cols,row,*string++,fgColorBGR,byColorBGR);
+    cols +=11;
   }
 }
+
 /** draw the space ship to the screen*/
 void spaceShip(char col, char row, u_int colorBGR){
-  
+  //bottom part of the triangle
   for(int i=0; i<=17; i++){
     for(int j=0; j<=i; j++){
       drawPixel(16-j+47, 159-i,colorBGR);
@@ -39,7 +54,7 @@ void spaceShip(char col, char row, u_int colorBGR){
   //left triangle
   for(int i = 0; i <= 10; i++){
     for(int j =0; j <= i; j++){
-      drawPixel(col+i, row-j+1, colorBGR);
+      drawPixel(col+i, row-j+1, colorBGR);//+1 to make it come down one more row
     }
   }
   //since i want to push the r triangle to the right i add 30 more columns
@@ -49,41 +64,30 @@ void spaceShip(char col, char row, u_int colorBGR){
     }
   }
 }
+/* funtion to draw enemy spaceships */
+void enemy(char col, char row, u_int colorBGR){
+  for(int r = 0; r <= 20; r++){
+    // c+=2 to make the figure dotted,3 for pattern
+    for(int c = r; c <= 10; c+=2){
+      //right triangle of spaceship
+      drawPixel(col+c, row+r, colorBGR);
+      //left triangle of spaceship      
+      drawPixel(col-c, row+r, colorBGR);//+4 in the column to make them overlap
+    }
+  }
+}
 
 /*draw a rectangle to simulate bullets of a fixed size*/
 void bullet(u_char col, u_char row, u_int colorBGR){
 fillRectangle(col,row, 3, 12, colorBGR);
 }
 
-/** next two functions are used to draw a string to the screen*/
-void drawChar8x12(u_char rcol, u_char rrow,char c, u_int fgColorBGR, u_int bgColorBGR)
-{
-  u_char oc=c-0x20;
-  lcd_setArea(rcol,rrow,rcol+7,rrow+11);
-  for(u_char col = 0; col < 12; col++){
-    for(u_char bit = 128; bit > 0; bit >>=1){
-      u_int colorBGR=(font_8x12[oc][col] & bit) ? fgColorBGR : bgColorBGR;
-      lcd_writeColor(colorBGR);
-    }
-  }
-}
-
-void drawString8x12(u_char col,u_char row, char *string,u_int fgColorBGR, u_int byColorBGR)
-{
-  u_char cols=col;
-  while(*string && (cols + 7 < screenWidth)){
-    drawChar8x12(cols,row,*string++,fgColorBGR,byColorBGR);
-    cols +=11;
-  }
-}
-
 /*Helper function to call functions and form an image*/
 void customShape(u_int bgColor,u_int enemyColorBGR, u_int bulletRBG, u_int spaceship){
   clearScreen(bgColor);
-  // saviour spaceship
-  spaceShip(45,140,spaceship);
-  // enemy space ships
-  enemy(20,30, enemyColorBGR);
+ 
+  spaceShip(45,140,spaceship); /* spaceship */
+  enemy(20,30, enemyColorBGR); /* enemy space ships */
   enemy(50,50, enemyColorBGR);
   enemy(90,20, enemyColorBGR);
   bullet(70,80,bulletRBG);
@@ -93,8 +97,8 @@ void customShape(u_int bgColor,u_int enemyColorBGR, u_int bulletRBG, u_int space
 
 /**draws a string of the size 8x12*/
 void drawCustomString(){
-      demoSong();
-      clearScreen(COLOR_WHITE);
+      demoSong_();//  assembly state machine funtion
+      //clearScreen(COLOR_WHITE);
       drawString8x12(5,20,"Miguel Mun.",COLOR_BLACK,COLOR_WHITE);
       drawString8x12(20,50,"Project-3",COLOR_BLACK,COLOR_WHITE);
       drawString8x12(30,80,"LCD TOY",COLOR_BLACK,COLOR_WHITE);

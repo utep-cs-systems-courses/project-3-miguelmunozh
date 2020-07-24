@@ -2,12 +2,15 @@
 #include <libTimer.h>
 #include <lcdutils.h>
 #include <lcddraw.h>
-#include <p2switches.h>
+#include "p2switches.h"
 #include <shape.h>
 #include <abCircle.h>
 #include "buzzer.h"
-//#include "stateMachine.h"
+#include "stateMachine.h"
+#include "led.h"
+
 #define GREEN_LED BIT6
+#define RED_LED BIT0
 
 int redrawScreen = 1;           /**< Boolean for whether screen needs to be redrawn */
 
@@ -19,6 +22,7 @@ int state =0;
  */
 void main()
 {
+  
   P1DIR |= GREEN_LED;		/**< Green led on when CPU on */		
   P1OUT |= GREEN_LED;
 
@@ -28,39 +32,41 @@ void main()
   p2sw_init(15);
   buzzer_init();
   shapeInit();
+  led_init();
+  
   clearScreen(COLOR_WHITE);
- 
+
   enableWDTInterrupts();      /**< enable periodic interrupt */
   or_sr(0x8);	              /**< GIE (enable interrupts) */
 
-
+  //red_on =1;
   for(;;) { 
     while (!redrawScreen) { /**< Pause CPU if screen doesn't need updating */
       P1OUT &= ~GREEN_LED;    /**< Green led off witHo CPU */
+    //P1OUT &= ~RED_LED;      /**< Ren led on when CPU on */
+    
       or_sr(0x10);	      /**< CPU OFF */
     }
     P1OUT |= GREEN_LED;       /**< Green led on when CPU on */
+    //P1OUT |= RED_LED;       /**< Reen led on when CPU on */
     redrawScreen = 0;
-
-    fillRectangle(col,row, 20, 20, COLOR_ORANGE);
-   
-  }
+    //red_on = 1;
+    fillRectangle(col,row, 20, 20, COLOR_ORANGE);   
+  }  
 }
 
 /** Watchdog timer interrupt handler. 15 interrupts/sec */
 void wdt_c_handler()
 {
-    u_int switches = p2sw_read(), i;
-    char str[5];
-    for (i = 0; i < 4; i++){
-      str[i] = (switches & (1<<i)) ? '-' : '0'+i;
-    }
+  u_int switches = p2sw_read();
+ 
   static short count = 0;
   P1OUT |= GREEN_LED;		      /**< Green LED on when cpu on */
   count ++;
   if (count == 15) {
-
-    /**state machine to move the SQUARE and paint my first initial */
+  //u_int switches = p2sw_read();
+  
+/**state machine to move the SQUARE and paint my first initial */
 switch(state){
   case 0:
      row--;
@@ -93,22 +99,24 @@ switch(state){
  }
 
 /**control what the butons do when they are pressed*/
-    if(str[0]=='0'){
-      buzzer_set_period(0);
-      redrawScreen = 1; //not update the screen,
+    if(~switches & SW1){
+      stopSound();      /*function in assembly to stop sounds*/
+      redrawScreen = 1; // update the screen,
     }
-    if(str[1]=='1'){
-     buzzer_set_period(0);
+    if(~switches & SW2){
+     stopSound();
      customShape(COLOR_BLACK,COLOR_WHITE, COLOR_RED,COLOR_PINK);
     }
-    if(str[2]=='2'){
-      buzzer_set_period(0);
+    
+    if(~switches & SW3){
       customShape(COLOR_WHITE,COLOR_BLACK,COLOR_PINK,COLOR_TURQUOISE);
+      soundEffect();
     }
-    if(str[3]=='3'){
+     
+    if(~switches & SW4){
       drawCustomString();
     }
     count = 0;
-  } 
-  P1OUT &= ~GREEN_LED;		    /**< Green LED off when cpu off */
+  }
+   P1OUT &= ~GREEN_LED;		    /**< Green LED off when cpu off */
 }

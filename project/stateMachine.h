@@ -4,6 +4,6 @@
 void demoSong();
 
 char moveShape(int c, int r);
-
+void toggle_red();
 
 #endif /* stateMachine_included */
