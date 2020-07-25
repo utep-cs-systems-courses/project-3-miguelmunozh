@@ -5,5 +5,5 @@ void demoSong();
 
 char moveShape(int c, int r);
 void toggle_red();
-
+void btnState();
 #endif /* stateMachine_included */

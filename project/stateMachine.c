@@ -1,6 +1,37 @@
-#include "stateMachine.h"
+#include <msp430.h>
+#include <libTimer.h>
+#include <lcdutils.h>
+#include <lcddraw.h>
+#include "p2switches.h"
+#include <shape.h>
+#include <abCircle.h>
 #include "buzzer.h"
+#include "stateMachine.h"
 #include "led.h"
+
+void btnState(){
+ switch(stat){
+  case 1:
+     stopSound();      //function in assembly to stop sounds
+     redrawScreen = 1; // update the screen,
+     stat = 1;
+    break;
+  case 2:
+     stopSound();
+     customShape(COLOR_BLACK,COLOR_WHITE, COLOR_RED,COLOR_PINK);
+     stat = 0;
+    break;
+  case 3:
+      customShape(COLOR_WHITE,COLOR_BLACK,COLOR_PINK,COLOR_TURQUOISE);
+      soundEffect();
+      stat = 0;
+    break;
+  case 4:
+      drawCustomString();
+      stat = 4;
+    break;
+ }
+}
 
 /** song played when showing */
 void demoSong(){

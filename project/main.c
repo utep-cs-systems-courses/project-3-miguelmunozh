@@ -22,7 +22,7 @@ int state =0;
  */
 void main()
 {
-  
+    
   P1DIR |= GREEN_LED;		/**< Green led on when CPU on */		
   P1OUT |= GREEN_LED;
 
@@ -50,7 +50,7 @@ void main()
     P1OUT |= GREEN_LED;       /**< Green led on when CPU on */
     //P1OUT |= RED_LED;       /**< Reen led on when CPU on */
     redrawScreen = 0;
-    //red_on = 1;
+
     fillRectangle(col,row, 20, 20, COLOR_ORANGE);   
   }  
 }
@@ -58,13 +58,12 @@ void main()
 /** Watchdog timer interrupt handler. 15 interrupts/sec */
 void wdt_c_handler()
 {
-  u_int switches = p2sw_read();
- 
+  //u_int switches = p2sw_read();
+  
   static short count = 0;
   P1OUT |= GREEN_LED;		      /**< Green LED on when cpu on */
   count ++;
   if (count == 15) {
-  //u_int switches = p2sw_read();
   
 /**state machine to move the SQUARE and paint my first initial */
 switch(state){
@@ -98,25 +97,54 @@ switch(state){
     break;
  }
 
-/**control what the butons do when they are pressed*/
-    if(~switches & SW1){
-      stopSound();      /*function in assembly to stop sounds*/
-      redrawScreen = 1; // update the screen,
-    }
-    if(~switches & SW2){
+ btnState();
+
+
+ /* switch(stat){
+  case 1:
+     stopSound();      //function in assembly to stop sounds
+     redrawScreen = 1; // update the screen,
+     stat = 1;
+    break;
+  case 2:
      stopSound();
      customShape(COLOR_BLACK,COLOR_WHITE, COLOR_RED,COLOR_PINK);
-    }
-    
-    if(~switches & SW3){
+     stat = 0;
+    break;
+  case 3:
       customShape(COLOR_WHITE,COLOR_BLACK,COLOR_PINK,COLOR_TURQUOISE);
       soundEffect();
+      stat = 0;
+    break;
+  case 4:
+      drawCustomString();
+      stat = 4;
+    break;
+ }
+ */
+   /**control what the butons do when they are pressed*/
+ /*if(stat == 1){
+      stopSound();      //function in assembly to stop sounds
+      redrawScreen = 1; // update the screen,
+      stat = 0;
+    }
+    if(stat == 2){
+     stopSound();
+     customShape(COLOR_BLACK,COLOR_WHITE, COLOR_RED,COLOR_PINK);
+     stat = 0;
+    }
+    
+    if(stat == 3){
+      customShape(COLOR_WHITE,COLOR_BLACK,COLOR_PINK,COLOR_TURQUOISE);
+      soundEffect();
+      stat = 0;
     }
      
-    if(~switches & SW4){
+    if(stat == 4){
       drawCustomString();
-    }
-    count = 0;
+      
+      }*/
+   count = 0;
   }
    P1OUT &= ~GREEN_LED;		    /**< Green LED off when cpu off */
 }

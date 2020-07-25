@@ -1,10 +1,16 @@
 #include <msp430.h>
 #include "p2switches.h"
-
+#include <lcdutils.h>
+#include <lcddraw.h>
 static unsigned char switch_mask;
 static unsigned char switches_last_reported;
 static unsigned char switches_current;
-
+char switch_state_down,
+            switch_state_down2,
+            switch_state_down3,
+            switch_state_down4; /* effectively boolean */
+char stat = 0;
+  
 static void
 switch_update_interrupt_sense()
 {
@@ -36,6 +42,34 @@ p2sw_read() {
   switches_last_reported = switches_current;
   return switches_current | (sw_changed << 8);
 }
+void
+switch_interrupt_handler()
+{
+  u_int switches = p2sw_read();
+
+  // char p1val = switch_update_interrupt_sense();
+  switch_state_down =  (~switches & BIT0) ? 0 : 1; /* 0 when SW1 is up */
+  switch_state_down2 = (~switches & BIT1) ? 0 : 1;
+  switch_state_down3 = (~switches & BIT2) ? 0 : 1;
+  switch_state_down4 = (~switches & BIT3) ? 0 : 1;
+  
+  /*handle all 4 buttons, if the button is push switch_statedownN = 1 otherwise is 0*/
+  
+  
+  //  led_update();
+  if(switch_state_down == 0){
+    stat = 1;
+  }
+  if(switch_state_down2 == 0){
+    stat = 2;
+  }
+  if(switch_state_down3 == 0){
+    stat = 3;
+  }
+  if(switch_state_down4 == 0){
+    stat = 4;
+  }  
+}
 
 /* Switch on P2 (S1) */
 void
@@ -43,5 +77,7 @@ __interrupt_vec(PORT2_VECTOR) Port_2(){
   if (P2IFG & switch_mask) {  /* did a button cause this interrupt? */
     P2IFG &= ~switch_mask;	/* clear pending sw interrupts */
     switch_update_interrupt_sense();
+    switch_interrupt_handler();	/* single handler for all switches */
+
   }
 }
