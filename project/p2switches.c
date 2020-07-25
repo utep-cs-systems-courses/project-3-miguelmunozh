@@ -1,7 +1,7 @@
 #include <msp430.h>
 #include "p2switches.h"
-#include <lcdutils.h>
-#include <lcddraw.h>
+#include "lcdutils.h"
+#include "lcddraw.h"
 static unsigned char switch_mask;
 static unsigned char switches_last_reported;
 static unsigned char switches_current;

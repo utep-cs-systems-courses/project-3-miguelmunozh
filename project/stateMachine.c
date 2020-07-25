@@ -7,7 +7,8 @@
 #include <abCircle.h>
 #include "buzzer.h"
 #include "stateMachine.h"
-#include "led.h"
+
+
 
 void btnState(){
  switch(stat){
@@ -119,8 +120,3 @@ void soundEffect(){
       }
       buzzer_set_period(0);
 }
-/*
-void toggle_red(){
-  red_on = 1;
-}
-*/

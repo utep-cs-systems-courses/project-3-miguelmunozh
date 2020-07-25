@@ -97,7 +97,7 @@ void customShape(u_int bgColor,u_int enemyColorBGR, u_int bulletRBG, u_int space
 
 /**draws a string of the size 8x12*/
 void drawCustomString(){
-      demoSong_();//  assembly state machine funtion
+      demoSong_();   //  assembly state machine funtion
       //clearScreen(COLOR_WHITE);
       drawString8x12(5,20,"Miguel Mun.",COLOR_BLACK,COLOR_WHITE);
       drawString8x12(20,50,"Project-3",COLOR_BLACK,COLOR_WHITE);
