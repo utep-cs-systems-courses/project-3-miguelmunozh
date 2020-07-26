@@ -38,16 +38,13 @@ void main()
   enableWDTInterrupts();      /**< enable periodic interrupt */
   or_sr(0x8);	              /**< GIE (enable interrupts) */
 
-  //red_on =1;
   for(;;) { 
     while (!redrawScreen) { /**< Pause CPU if screen doesn't need updating */
       P1OUT &= ~GREEN_LED;    /**< Green led off witHo CPU */
-    //P1OUT &= ~RED_LED;      /**< Ren led on when CPU on */
-    
+      
       or_sr(0x10);	      /**< CPU OFF */
     }
     P1OUT |= GREEN_LED;       /**< Green led on when CPU on */
-    //P1OUT |= RED_LED;       /**< Reen led on when CPU on */
     redrawScreen = 0;
 
     fillRectangle(col,row, 20, 20, COLOR_ORANGE);   
@@ -94,8 +91,8 @@ void wdt_c_handler()
     break;
  }
 
-  btnState();
-//buttonState(); assembly function
+ //btnState();
+   buttonState();// assembly function
 
    count = 0;
   }

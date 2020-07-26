@@ -11,4 +11,5 @@ void demoSong();
 char moveShape();
 void toggle_red();
 void btnState();
+void soundEffect();
 #endif /* stateMachine_included */

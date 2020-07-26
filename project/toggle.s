@@ -1,27 +1,27 @@
 	.arch msp430g2553
 	
-	.data
-
+	
+	.p2align 2,0
 	/*state machine to control buttons*/
 
 jt:
+	.word default
 	.word case1
 	.word case2
 	.word case3
 	.word case4
-	.word default
-
+	
 	.global buttonState
 buttonState:
 	cmp #5, &stat 		;range check
-	jmp default		;jump to default
+	jhs default		;jump to default
 	mov &stat, r12	 	;moves state into r12
 	add r12, r12		;add r12 into r12 
 	mov jt(r12), r0		;start at first in jt
 
 case1:
 	call #stopSound
-	mov #1, &redrawScreen
+	add #1, &redrawScreen
 	mov #1, &stat
 	jmp end
 case2:
@@ -31,6 +31,7 @@ case2:
 	mov #0xf800, r14
 	mov #0x001f, r15
 	call #customShape
+	mov #0, &redrawScreen
 	mov #0, &stat
 	jmp end
 case3:
@@ -47,8 +48,6 @@ case4:
 	mov #4, &stat
 	jmp end
 default:
-	mov #1000, r12
-	call #buzzer_set_period
 	jump end
 end:
 	ret

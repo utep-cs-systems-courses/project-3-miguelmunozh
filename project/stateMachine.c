@@ -2,13 +2,15 @@
 #include <libTimer.h>
 #include <lcdutils.h>
 #include <lcddraw.h>
+#include "stateMachine.h"
 #include "p2switches.h"
 #include <shape.h>
 #include <abCircle.h>
 #include "buzzer.h"
-#include "stateMachine.h"
 
-
+void stopSound();
+void customShape();
+void drawCustomString();
 
 void btnState(){
  switch(stat){
