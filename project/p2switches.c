@@ -48,25 +48,25 @@ switch_interrupt_handler()
   u_int switches = p2sw_read();
 
   // char p1val = switch_update_interrupt_sense();
-  switch_state_down =  (~switches & BIT0) ? 0 : 1; /* 0 when SW1 is up */
-  switch_state_down2 = (~switches & BIT1) ? 0 : 1;
-  switch_state_down3 = (~switches & BIT2) ? 0 : 1;
-  switch_state_down4 = (~switches & BIT3) ? 0 : 1;
+  switch_state_down =  (~switches & BIT0) ? 1 : 0; /* 0 when SW1 is up */
+  switch_state_down2 = (~switches & BIT1) ? 1 : 0;
+  switch_state_down3 = (~switches & BIT2) ? 1 : 0;
+  switch_state_down4 = (~switches & BIT3) ? 1 : 0;
   
   /*handle all 4 buttons, if the button is push switch_statedownN = 1 otherwise is 0*/
   
   
-  //  led_update();
-  if(switch_state_down == 0){
+  //led_update();
+  if(switch_state_down){
     stat = 1;
   }
-  if(switch_state_down2 == 0){
+  if(switch_state_down2){
     stat = 2;
   }
-  if(switch_state_down3 == 0){
+  if(switch_state_down3){
     stat = 3;
   }
-  if(switch_state_down4 == 0){
+  if(switch_state_down4){
     stat = 4;
   }  
 }
@@ -78,6 +78,5 @@ __interrupt_vec(PORT2_VECTOR) Port_2(){
     P2IFG &= ~switch_mask;	/* clear pending sw interrupts */
     switch_update_interrupt_sense();
     switch_interrupt_handler();	/* single handler for all switches */
-
   }
 }
