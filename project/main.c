@@ -58,40 +58,9 @@ void wdt_c_handler()
   P1OUT |= GREEN_LED;		      /**< Green LED on when cpu on */
   count ++;
   if (count == 15) {
-  
-/**state machine to move the SQUARE and paint my first initial */
- switch(state){
-  case 0:
-     row--;
-      if(row == 30){
-	state = 1;
-      }      
-    break;
-  case 1:
-    	col++;
-	row++;
-	if(col==50){
-	  state = 2;
-      }
-    break;
-  case 2:
-    	col++;
-	row--;
-	if(col==90){	
-	  state = 3;
-      }
-    break;
-  case 3:
-    row++;
-	if(row==90){	
-	  col = 10;
-	  row = 90;
-	  state = 0;
-	}
-    break;
- }
+   moveShape();
 
- //btnState();
+   
    buttonState();// assembly function
 
    count = 0;

@@ -8,7 +8,7 @@ extern int state;
 /** plays a song */
 void demoSong();
 
-char moveShape();
+void moveShape();
 void toggle_red();
 void btnState();
 void soundEffect();
