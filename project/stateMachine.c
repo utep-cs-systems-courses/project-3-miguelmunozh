@@ -150,7 +150,7 @@ void soundEffect(){
 	  buzzer_set_period(i+10);
 	}
       }
-        for(int i =10000 ;i>1000;i--){                
+  for(int i =10000 ;i>1000;i--){                
 	for(int j =100 ; j>0; j--){ 
 	  buzzer_set_period(i-10);
 	}

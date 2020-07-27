@@ -21,7 +21,7 @@ buttonState:
 
 case1:
 	call #stopSound
-	add #1, &redrawScreen
+	mov #1, &redrawScreen
 	mov #1, &stat
 	jmp end
 case2:
