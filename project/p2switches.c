@@ -47,7 +47,6 @@ switch_interrupt_handler()
 {
   u_int switches = p2sw_read();
 
-  // char p1val = switch_update_interrupt_sense();
   switch_state_down =  (~switches & BIT0) ? 1 : 0; /* 0 when SW1 is up */
   switch_state_down2 = (~switches & BIT1) ? 1 : 0;
   switch_state_down3 = (~switches & BIT2) ? 1 : 0;
@@ -56,7 +55,6 @@ switch_interrupt_handler()
   /*handle all 4 buttons, if the button is push switch_statedownN = 1 otherwise is 0*/
   
   
-  //led_update();
   if(switch_state_down){
     stat = 1;
   }
