@@ -68,18 +68,15 @@ void spaceShip(char col, char row, u_int colorBGR){
 void enemy(char col, char row, u_int colorBGR){
   for(int r = 0; r <= 20; r++){
     // c+=2 to make the figure dotted,3 for pattern
-    for(int c = r; c <= 10; c+=2){
-      //right triangle of spaceship
-      drawPixel(col+c, row+r, colorBGR);
-      //left triangle of spaceship      
-      drawPixel(col-c, row+r, colorBGR);//+4 in the column to make them overlap
+    for(int c = r; c <= 10; c+=2){      
+      drawPixel(col-c, row+r, colorBGR);
     }
   }
 }
 
 /*draw a rectangle to simulate bullets of a fixed size*/
 void bullet(u_char col, u_char row, u_int colorBGR){
-fillRectangle(col,row, 3, 12, colorBGR);
+fillRectangle(col,row, 2, 12, colorBGR);
 }
 
 /*Helper function to call functions and form an image*/
